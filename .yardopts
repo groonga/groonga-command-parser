@@ -2,5 +2,6 @@
 --no-private
 --output doc/reference/en
 --title "groonga-command-parser API Reference"
+--po-dir doc/po
 -
 doc/text/*
