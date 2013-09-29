@@ -1,0 +1,6 @@
+/test/.test-result/
+/.yardoc/
+/doc/reference/
+/doc/po/groonga-command-parser.pot
+/pkg/
+/Gemfile.lock
