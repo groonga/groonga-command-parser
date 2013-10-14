@@ -370,6 +370,18 @@ module Groonga
 
       def parse_command_line(command_line)
         name, *arguments = Shellwords.shellwords(command_line)
+        arguments = arguments.collect do |argument|
+          # TODO: Groonga supports backslash escape in both single
+          # quoted argument and double quoted argument ('...' and
+          # "..."). We should not unescape except single quoted
+          # argument ('...') because Shellwords.shellwords unescape it
+          # in double quoted argument. But we can't determine whether
+          # the argument is single quoted or not after
+          # Shellwords.shellwords... And groonga supports '\n' -> new line
+          # conversion. It isn't done by Shellwords.shellwords.
+          # Should we implement Shellwords.shellwords by ourselves?
+          unescape_argument_in_command_line(argument)
+        end
         pair_arguments = {}
         ordered_arguments = []
         until arguments.empty?
@@ -384,6 +396,26 @@ module Groonga
         command = command_class.new(name, pair_arguments, ordered_arguments)
         command.original_format = :command
         command
+      end
+
+      def unescape_argument_in_command_line(argument)
+        argument.gsub(/\\(.)/) do
+          character = $1
+          case character
+          when "b"
+            "\b"
+          when "f"
+            "\f"
+          when "n"
+            "\n"
+          when "r"
+            "\r"
+          when "t"
+            "\t"
+          else
+            character
+          end
+        end
       end
 
       def reset
