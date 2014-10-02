@@ -1,5 +1,11 @@
 # News
 
+## 1.0.2: 2014-10-02
+
+### Improvements
+
+  * Supported custom prefix URI such as `/groonga/db/select?table=Users`.
+
 ## 1.0.1: 2013-10-29
 
 ### Improvements
