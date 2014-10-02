@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2011-2013  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2011-2014  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -47,6 +47,18 @@ class ParserTest < Test::Unit::TestCase
       path = "/d/select?table=Users&key_only"
       command = Groonga::Command::Parser.parse(path)
       assert_equal({:table => "Users"}, command.arguments)
+    end
+
+    def test_custom_prefix
+      path = "/db1/select?table=Users"
+      command = Groonga::Command::Parser.parse(path)
+      assert_equal("/db1", command.path_prefix)
+    end
+
+    def test_deep_custom_prefix
+      path = "/groonga/db1/select?table=Users"
+      command = Groonga::Command::Parser.parse(path)
+      assert_equal("/groonga/db1", command.path_prefix)
     end
 
     class ParseTest < self

@@ -16,6 +16,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+require "English"
 require "shellwords"
 require "cgi"
 
@@ -342,15 +343,15 @@ module Groonga
       end
 
       def parse_command(input)
-        if input.start_with?("/d/")
+        if input.start_with?("/")
           parse_uri_path(input)
         else
           parse_command_line(input)
         end
       end
 
-      def parse_uri_path(path)
-        name, arguments_string = path.split(/\?/, 2)
+      def parse_uri_path(relative_uri)
+        path, arguments_string = relative_uri.split(/\?/, 2)
         arguments = {}
         if arguments_string
           arguments_string.split(/&/).each do |argument_string|
@@ -359,12 +360,19 @@ module Groonga
             arguments[key] = CGI.unescape(value)
           end
         end
-        name = name.gsub(/\A\/d\//, '')
+        if /\/([^\/]*)\z/=~ path
+          prefix = $PREMATCH
+          name = $1
+        else
+          prefix = ""
+          name = path
+        end
         name, output_type = name.split(/\./, 2)
         arguments["output_type"] = output_type if output_type
         command_class = Command.find(name)
         command = command_class.new(name, arguments)
         command.original_format = :uri
+        command.path_prefix = prefix
         command
       end
 
