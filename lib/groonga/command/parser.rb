@@ -369,7 +369,7 @@ module Groonga
         end
         name, output_type = name.split(/\./, 2)
         arguments["output_type"] = output_type if output_type
-        command_class = Command.find(name)
+        command_class = ::Groonga::Command.find(name)
         command = command_class.new(name, arguments)
         command.original_format = :uri
         command.path_prefix = prefix
@@ -400,7 +400,7 @@ module Groonga
             ordered_arguments << argument
           end
         end
-        command_class = Command.find(name)
+        command_class = ::Groonga::Command.find(name)
         command = command_class.new(name, pair_arguments, ordered_arguments)
         command.original_format = :command
         command
