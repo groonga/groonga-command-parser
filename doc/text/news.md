@@ -1,5 +1,12 @@
 # News
 
+## 1.0.3: 2014-12-12
+
+### Improvements
+
+  * Added "groonga-command-convert-format" command that converts
+    command format.
+
 ## 1.0.2: 2014-10-02
 
 ### Improvements
