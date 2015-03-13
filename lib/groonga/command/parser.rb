@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2011-2013  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2011-2015  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 require "English"
-require "shellwords"
 require "cgi"
 
 require "yajl"
@@ -25,6 +24,7 @@ require "yajl"
 require "groonga/command"
 
 require "groonga/command/parser/error"
+require "groonga/command/parser/command-line-splitter"
 require "groonga/command/parser/version"
 
 module Groonga
@@ -377,19 +377,8 @@ module Groonga
       end
 
       def parse_command_line(command_line)
-        name, *arguments = Shellwords.shellwords(command_line)
-        arguments = arguments.collect do |argument|
-          # TODO: Groonga supports backslash escape in both single
-          # quoted argument and double quoted argument ('...' and
-          # "..."). We should not unescape except single quoted
-          # argument ('...') because Shellwords.shellwords unescape it
-          # in double quoted argument. But we can't determine whether
-          # the argument is single quoted or not after
-          # Shellwords.shellwords... And groonga supports '\n' -> new line
-          # conversion. It isn't done by Shellwords.shellwords.
-          # Should we implement Shellwords.shellwords by ourselves?
-          unescape_argument_in_command_line(argument)
-        end
+        splitter = CommandLineSplitter.new(command_line)
+        name, *arguments = splitter.split
         pair_arguments = {}
         ordered_arguments = []
         until arguments.empty?
@@ -404,26 +393,6 @@ module Groonga
         command = command_class.new(name, pair_arguments, ordered_arguments)
         command.original_format = :command
         command
-      end
-
-      def unescape_argument_in_command_line(argument)
-        argument.gsub(/\\(.)/) do
-          character = $1
-          case character
-          when "b"
-            "\b"
-          when "f"
-            "\f"
-          when "n"
-            "\n"
-          when "r"
-            "\r"
-          when "t"
-            "\t"
-          else
-            character
-          end
-        end
       end
 
       def reset
