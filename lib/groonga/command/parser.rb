@@ -123,6 +123,7 @@ module Groonga
       # @param [String] chunk parsed chunk of command.
       def <<(chunk)
         @buffer << chunk
+        @buffer.force_encoding("ASCII-8BIT")
         consume_buffer
       end
 
