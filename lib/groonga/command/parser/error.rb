@@ -42,8 +42,8 @@ module Groonga
             location << " " * before.bytesize + "^"
             location << after
           else
-            before_lines = before.lines
-            after_lines = after.lines
+            before_lines = before.lines.to_a
+            after_lines = after.lines.to_a
             last_before_line = before_lines.last
             if last_before_line
               error_offset = last_before_line.bytesize
