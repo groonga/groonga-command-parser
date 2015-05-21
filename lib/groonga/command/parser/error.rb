@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2011-2013  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2011-2015  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -42,9 +42,22 @@ module Groonga
             location << " " * before.bytesize + "^"
             location << after
           else
-            location << before
-            location << after
-            location << " " * before.bytesize + "^"
+            before_lines = before.lines
+            after_lines = after.lines
+            last_before_line = before_lines.last
+            if last_before_line
+              error_offset = last_before_line.bytesize
+            else
+              error_offset = 0
+            end
+            before_lines.each do |before_line|
+              location << before_line
+            end
+            location << after_lines.first
+            location << " " * error_offset + "^\n"
+            after_lines[1..-1].each do |after_line|
+              location << after_line
+            end
           end
           location
         end

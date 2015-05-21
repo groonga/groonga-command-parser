@@ -228,10 +228,11 @@ EOC
               expected_events << [:load_columns, <<-EOC.chomp, ["_key", "name"]]
 load --table Users --columns "_key, name"
 EOC
-              expected_events << [:load_value, <<-EOC.chomp, ["alice", "Alice"]]
+              expected_events << [:load_value, <<-EOC, ["alice", "Alice"]]
 load --table Users --columns "_key, name"
 [
 ["alice", "Alice"]
+]
 EOC
               expected_events << [:load_complete, <<-EOC.chomp]
 load --table Users --columns "_key, name"
@@ -254,16 +255,19 @@ EOC
               expected_events << [:load_start, <<-EOC.chomp]
 load --table Users
 EOC
-              expected_events << [:load_columns, <<-EOC.chomp, ["_key", "name"]]
-load --table Users
-[
-["_key", "name"]
-EOC
-              expected_events << [:load_value, <<-EOC.chomp, ["alice", "Alice"]]
+              expected_events << [:load_columns, <<-EOC, ["_key", "name"]]
 load --table Users
 [
 ["_key", "name"],
 ["alice", "Alice"]
+]
+EOC
+              expected_events << [:load_value, <<-EOC, ["alice", "Alice"]]
+load --table Users
+[
+["_key", "name"],
+["alice", "Alice"]
+]
 EOC
               expected_events << [:load_complete, <<-EOC.chomp]
 load --table Users
@@ -289,17 +293,20 @@ EOC
 load --table Users
 EOC
             value = {"_key" => "alice", "name" => "Alice"}
-            expected_events << [:load_value, <<-EOC.chomp, value]
-load --table Users
-[
-{"_key": "alice", "name": "Alice"}
-EOC
-            value = {"_key" => "bob", "name" => "Bob"}
-            expected_events << [:load_value, <<-EOC.chomp, value]
+            expected_events << [:load_value, <<-EOC, value]
 load --table Users
 [
 {"_key": "alice", "name": "Alice"},
 {"_key": "bob",   "name": "Bob"}
+]
+EOC
+            value = {"_key" => "bob", "name" => "Bob"}
+            expected_events << [:load_value, <<-EOC, value]
+load --table Users
+[
+{"_key": "alice", "name": "Alice"},
+{"_key": "bob",   "name": "Bob"}
+]
 EOC
             expected_events << [:load_complete, <<-EOC.chomp]
 load --table Users
@@ -327,9 +334,14 @@ EOS
           end
 
           def test_no_record_separate_comma
-            message = "record separate comma is missing"
-            before = "{\"_key\": \"alice\", \"name\": \"Alice\"}"
-            after = "\n{\"_key\": \"bob\""
+            message = "parse error: after array element, I expect ',' or ']'"
+            before = <<-BEFORE
+[
+{"_key": "alice", "name": "Alice"}
+            BEFORE
+            after = <<-AFTER
+{"_key": "bob",   "name": "Bob"}
+            AFTER
             error = Groonga::Command::Parser::Error.new(message, before, after)
             assert_raise(error) do
               @parser << <<-EOC
@@ -343,17 +355,22 @@ EOC
 
           def test_garbage_before_json
             message = "there are garbages before JSON"
-            before = "load --table Users\n"
-            after = "XXX\n"
+            before = ""
+            after = <<-AFTER
+XXX
+[
+{"_key": "alice", "name": "Alice"}
+]
+            AFTER
             error = Groonga::Command::Parser::Error.new(message, before, after)
             assert_raise(error) do
-              @parser << <<-EOC
+              @parser << <<-JSON
 load --table Users
 XXX
 [
 {"_key": "alice", "name": "Alice"}
 ]
-EOC
+              JSON
             end
           end
         end

@@ -18,13 +18,13 @@
 
 require "English"
 require "cgi"
-
-require "yajl"
+require "json"
 
 require "groonga/command"
 
 require "groonga/command/parser/error"
 require "groonga/command/parser/command-line-splitter"
+require "groonga/command/parser/load-values-parser"
 require "groonga/command/parser/version"
 
 module Groonga
@@ -91,7 +91,7 @@ module Groonga
           end
           parser.on_load_complete do |command|
             parsed_command = command
-            parsed_command[:values] ||= Yajl::Encoder.encode(values)
+            parsed_command[:values] ||= JSON.generate(values)
           end
 
           consume_data(parser, data)
@@ -117,6 +117,7 @@ module Groonga
       def initialize
         reset
         initialize_hooks
+        initialize_load_values_parser
       end
 
       # Streaming parsing command.
@@ -215,78 +216,10 @@ module Groonga
       end
 
       def consume_load_values(tag)
-        if @in_load_values
-          json, separator, rest = @buffer.partition(/[\]},]/)
-          if @load_value_completed
-            throw(tag) if separator.empty?
-            if separator == ","
-              if /\A\s*\z/ =~ json
-                @command.original_source << json << separator
-                @buffer = rest
-                @load_value_completed = false
-                return
-              else
-                raise Error.new("record separate comma is missing",
-                                @command.original_source.lines.to_a.last,
-                                json)
-              end
-            elsif separator == "]"
-              if /\A\s*\z/ =~ json
-                @command.original_source << json << separator
-                @buffer = rest
-                on_load_complete(@command)
-                reset
-                return
-              end
-            end
-          end
-          @buffer = rest
-          parse_json(json)
-          if separator.empty?
-            throw(tag)
-          else
-            @load_value_completed = false
-            parse_json(separator)
-          end
-        else
-          spaces, start_json, rest = @buffer.partition("[")
-          unless /\A\s*\z/ =~ spaces
-            raise Error.new("there are garbages before JSON",
-                            @command.original_source.lines.to_a.last,
-                            spaces)
-          end
-          if start_json.empty?
-            @command.original_source << @buffer
-            @buffer.clear
-            throw(tag)
-          else
-            @command.original_source << spaces << start_json
-            @buffer = rest
-            @json_parser = Yajl::Parser.new
-            @json_parser.on_parse_complete = lambda do |object|
-              if object.is_a?(::Array) and @command.columns.nil?
-                @command.columns = object
-                on_load_columns(@command, object)
-              else
-                on_load_value(@command, object)
-              end
-              @load_value_completed = true
-            end
-            @in_load_values = true
-          end
-        end
-      end
-
-      def parse_json(json)
-        @command.original_source << json
-        begin
-          @json_parser << json
-        rescue Yajl::ParseError
-          before_json = @command.original_source[0..(-json.bytesize)]
-          message = "invalid JSON: #{$!.message}: <#{json}>:\n"
-          message << before_json
-          raise Error.new(message, before_json, json)
-        end
+        throw(tag) if @buffer.empty?
+        @command.original_source << @buffer
+        @load_values_parser << @buffer
+        @buffer.clear
       end
 
       def consume_line(tag)
@@ -322,16 +255,7 @@ module Groonga
             on_load_columns(@command, @command.columns)
           end
           if @command[:values]
-            values = Yajl::Parser.parse(@command[:values])
-            if @command.columns.nil? and values.first.is_a?(::Array)
-              header = values.shift
-              @command.columns = header
-              on_load_columns(@command, header)
-            end
-            values.each do |value|
-              on_load_value(@command, value)
-            end
-            on_load_complete(@command)
+            @load_values_parser << @command[:values]
             reset
           else
             @command.original_source << "\n"
@@ -399,8 +323,6 @@ module Groonga
       def reset
         @command = nil
         @loading = false
-        @in_load_values = false
-        @load_value_completed = false
         @buffer = "".force_encoding("ASCII-8BIT")
       end
 
@@ -410,6 +332,27 @@ module Groonga
         @on_load_columns_hook = nil
         @on_load_value_hook = nil
         @on_load_complete_hook = nil
+      end
+
+      def initialize_load_values_parser
+        @load_values_parser = LoadValuesParser.new
+        @load_values_parser.on_value = lambda do |value|
+          if value.is_a?(::Array) and @command.columns.nil?
+            @command.columns = value
+            on_load_columns(@command, value)
+          else
+            on_load_value(@command, value)
+          end
+        end
+        @load_values_parser.on_end = lambda do |rest|
+          if rest
+            original_source_size = @command.original_source.size
+            @command.original_source.slice!(original_source_size - rest.size,
+                                            rest.size)
+          end
+          on_load_complete(@command)
+          reset
+        end
       end
     end
   end

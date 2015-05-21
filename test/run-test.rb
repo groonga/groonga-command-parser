@@ -36,6 +36,13 @@ end
 $LOAD_PATH.unshift(lib_dir)
 $LOAD_PATH.unshift(test_dir)
 
+# TODO: Remove me when suppress warnings patches are merged int
+# ffi_yajl.
+require "stringio"
+$VERBOSE = false
+require "ffi_yajl/ffi"
+$VERBOSE = true
+
 require "groonga-command-parser-test-utils"
 
 ENV["TEST_UNIT_MAX_DIFF_TARGET_STRING_SIZE"] ||= "5000"
