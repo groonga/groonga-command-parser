@@ -38,7 +38,6 @@ $LOAD_PATH.unshift(test_dir)
 
 # TODO: Remove me when suppress warnings patches are merged int
 # ffi_yajl.
-require "stringio"
 $VERBOSE = false
 require "ffi_yajl/ffi"
 $VERBOSE = true
