@@ -99,11 +99,13 @@ module Groonga
           @boolean_callback = callback(:int) do |c_boolean|
             push_value(c_boolean != 0)
           end
-          @integer_callback = callback(:long_long) do |integer|
-            push_value(integer)
-          end
-          @double_callback = callback(:double) do |double|
-            push_value(double)
+          @number_callback = callback(:string, :size_t) do |data, size|
+            number_data = data.slice(0, size)
+            if /[\.eE]/ =~ number_data
+              number_data.to_f
+            else
+              number_data.to_i
+            end
           end
           @string_callback = callback(:string, :size_t) do |data, size|
             string = data.slice(0, size)
@@ -162,9 +164,9 @@ module Groonga
           callbacks = FFI_Yajl::YajlCallbacks.new(@callbacks_memory)
           callbacks[:yajl_null] = @null_callback
           callbacks[:yajl_boolean] = @boolean_callback
-          callbacks[:yajl_integer] = @integer_callback
-          callbacks[:yajl_double] = @double_callback
-          callbacks[:yajl_number] = nil
+          callbacks[:yajl_integer] = nil
+          callbacks[:yajl_double] = nil
+          callbacks[:yajl_number] = @number_callback
           callbacks[:yajl_string] = @string_callback
           callbacks[:yajl_start_map] = @start_map_callback
           callbacks[:yajl_map_key] = @map_key_callback
