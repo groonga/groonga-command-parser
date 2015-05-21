@@ -102,10 +102,11 @@ module Groonga
           @number_callback = callback(:string, :size_t) do |data, size|
             number_data = data.slice(0, size)
             if /[\.eE]/ =~ number_data
-              number_data.to_f
+              number = number_data.to_f
             else
-              number_data.to_i
+              number = number_data.to_i
             end
+            push_value(number)
           end
           @string_callback = callback(:string, :size_t) do |data, size|
             string = data.slice(0, size)
