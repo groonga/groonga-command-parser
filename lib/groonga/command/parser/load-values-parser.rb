@@ -180,12 +180,28 @@ module Groonga
                                :yajl_allow_trailing_garbage,
                                :int,
                                1)
+          @finalizer = Finalizer.new(@handle)
+          ObjectSpace.define_finalizer(self, @finalizer)
         end
 
         def finalize_handle
           @callbacks_memory = nil
-          FFI_Yajl.yajl_free(@handle)
+          @finalizer.call(object_id)
+          ObjectSpace.undefine_finalizer(self)
+          @finalizer = nil
           @handle = nil
+        end
+
+        class Finalizer
+          def initialize(handle)
+            @handle = handle
+          end
+
+          def call(object_id)
+            return if @handle.nil?
+            FFI_Yajl.yajl_free(@handle)
+            @handle = nil
+          end
         end
       end
     end
