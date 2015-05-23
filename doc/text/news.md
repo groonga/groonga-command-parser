@@ -1,5 +1,23 @@
 # News
 
+## 1.0.4: 2015-05-23
+
+### Improvements
+
+  * Made quoted text handling Groonga compatible.
+  * Changed JSON parser to ffi-yajl from yajl-ruby.
+    * Supported JRuby by this change.
+      [GitHub#1] [Reported by Hiroyuki Sato]
+    * Improved performance for large load data.
+
+### Fixes
+
+  * Fixed encoding related parse error on Windows.
+
+### Thanks
+
+  * Hiroyuki Sato
+
 ## 1.0.3: 2014-12-12
 
 ### Improvements
