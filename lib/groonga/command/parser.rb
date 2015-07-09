@@ -282,7 +282,7 @@ module Groonga
           arguments_string.split(/&/).each do |argument_string|
             key, value = argument_string.split(/\=/, 2)
             next if value.nil?
-            arguments[key] = CGI.unescape(value)
+            arguments[CGI.unescape(key)] = CGI.unescape(value)
           end
         end
         if /\/([^\/]*)\z/=~ path
