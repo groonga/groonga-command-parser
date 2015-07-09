@@ -49,6 +49,16 @@ class ParserTest < Test::Unit::TestCase
       assert_equal({:table => "Users"}, command.arguments)
     end
 
+    def test_bracket
+      path = "/d/select?table=Users&drilldown[name].keys=name"
+      command = Groonga::Command::Parser.parse(path)
+      assert_equal({
+                     :table => "Users",
+                     :"drilldown[name].keys" => "name",
+                   },
+                   command.arguments)
+    end
+
     def test_custom_prefix
       path = "/db1/select?table=Users"
       command = Groonga::Command::Parser.parse(path)
