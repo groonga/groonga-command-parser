@@ -105,7 +105,7 @@ module Groonga
               month = $2.to_i
               day = $3.to_i
               min = Time.local(year, month, day)
-              max = min + (60 + 60 * 24)
+              max = min + (60 * 60 * 24)
             else
               return
             end
