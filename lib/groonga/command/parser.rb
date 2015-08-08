@@ -96,7 +96,12 @@ module Groonga
 
           consume_data(parser, data)
           if parsed_command.nil?
-            raise Error.new("not completed", data.lines.to_a.last, "")
+            if data.respond_to?(:each)
+              last_chunk = data.last
+            else
+              last_chunk = data
+            end
+            raise Error.new("not completed", last_chunk, "")
           end
 
           parsed_command
