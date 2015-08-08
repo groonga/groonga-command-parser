@@ -43,7 +43,6 @@ module Groonga
             location << after
           else
             before_lines = before.lines.to_a
-            after_lines = after.lines.to_a
             last_before_line = before_lines.last
             if last_before_line
               error_offset = last_before_line.bytesize
@@ -53,10 +52,14 @@ module Groonga
             before_lines.each do |before_line|
               location << before_line
             end
-            location << after_lines.first
-            location << " " * error_offset + "^\n"
-            after_lines[1..-1].each do |after_line|
-              location << after_line
+
+            unless after.empty?
+              after_lines = after.lines.to_a
+              location << after_lines.first
+              location << " " * error_offset + "^\n"
+              after_lines[1..-1].each do |after_line|
+                location << after_line
+              end
             end
           end
           location
