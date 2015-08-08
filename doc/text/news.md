@@ -1,5 +1,21 @@
 # News
 
+## 1.0.5: 2015-08-08
+
+### Improvements
+
+  * `groonga-command-logicalify`: Added.
+  * Supported URI style `load` command that doesn't have `values`
+    parameter in path.
+
+### Fixes
+
+  * Fixed a bug that parameter name in URL isn't unescaped.
+
+### Thanks
+
+  * Hiroyuki Sato
+
 ## 1.0.4: 2015-05-23
 
 ### Improvements
