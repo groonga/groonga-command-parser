@@ -263,8 +263,13 @@ module Groonga
             @load_values_parser << @command[:values]
             reset
           else
-            @command.original_source << "\n"
-            @loading = true
+            if @command.original_format == :uri
+              on_load_complete(@command)
+              reset
+            else
+              @command.original_source << "\n"
+              @loading = true
+            end
           end
         else
           on_command(@command)

@@ -183,6 +183,19 @@ status
           end
         end
 
+        class URITest < self
+          def test_no_values
+            uri = "/d/load?table=Users"
+            @parser << uri
+            @parser << "\n"
+            assert_equal([
+                           [:load_start, uri],
+                           [:load_complete, uri],
+                         ],
+                         @events)
+          end
+        end
+
         class InlineTest < self
           class BracketTest < self
             def test_have_columns
