@@ -16,9 +16,6 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-# TODO: Remove me when https://github.com/chef/ffi-yajl/pull/62 is merged.
-require "stringio"
-ENV["FORCE_FFI_YAJL"] = "ffi"
 require "ffi_yajl"
 
 module FFI_Yajl
