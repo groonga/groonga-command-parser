@@ -254,7 +254,7 @@ module Groonga
       end
 
       def process_command
-        if @command.name == "load"
+        if @command.command_name == "load"
           on_load_start(@command)
           if @command.columns
             on_load_columns(@command, @command.columns)
