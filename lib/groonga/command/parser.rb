@@ -248,6 +248,8 @@ module Groonga
           on_comment($POSTMATCH)
         else
           @command = parse_command(line)
+          return if @command.nil?
+
           @command.original_source = line
           process_command
         end
@@ -302,6 +304,9 @@ module Groonga
           prefix = ""
           name = path
         end
+
+        return nil if name.empty?
+
         name, output_type = name.split(/\./, 2)
         arguments["output_type"] = output_type if output_type
         command_class = ::Groonga::Command.find(name)

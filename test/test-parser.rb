@@ -81,6 +81,13 @@ class ParserTest < Test::Unit::TestCase
       assert_equal("/groonga/db1", command.path_prefix)
     end
 
+    def test_no_command_name
+      error = Groonga::Command::Parser::Error.new("not completed", "/", "")
+      assert_raise(error) do
+        Groonga::Command::Parser.parse("/")
+      end
+    end
+
     class ParseTest < self
       include ParseTests
     end
