@@ -1,5 +1,11 @@
 # News
 
+## 1.0.6: 2016-09-12
+
+### Improvements
+
+  * Supported no command name URI such as `/`.
+
 ## 1.0.5: 2015-08-08
 
 ### Improvements
