@@ -109,9 +109,9 @@ module Groonga
         def push_value(value)
           container = @containers.last
           case container
-          when Hash
+          when ::Hash
             container[@keys.pop] = value
-          when Array
+          when ::Array
             container.push(value)
           end
         end
