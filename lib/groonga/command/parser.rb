@@ -122,7 +122,6 @@ module Groonga
       def initialize
         reset
         initialize_hooks
-        initialize_load_values_parser
       end
 
       # Streaming parsing command.
@@ -262,6 +261,7 @@ module Groonga
             on_load_columns(@command, @command.columns)
           end
           if @command[:values]
+            initialize_load_values_parser
             @load_values_parser << @command[:values]
             reset
           else
@@ -271,6 +271,7 @@ module Groonga
             else
               @command.original_source << "\n"
               @loading = true
+              initialize_load_values_parser
             end
           end
         else
@@ -339,6 +340,7 @@ module Groonga
         @command = nil
         @loading = false
         @buffer = "".force_encoding("ASCII-8BIT")
+        @load_values_parser = nil
       end
 
       def initialize_hooks
