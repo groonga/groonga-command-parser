@@ -27,7 +27,7 @@ class LoadValuesParserTest < Test::Unit::TestCase
 
   def parse(data)
     data.each_line do |line|
-    @parser << line
+      @parser << line
     end
     @values
   end
