@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-#
-# Copyright (C) 2011-2014  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2011-2016  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -374,7 +372,7 @@ EOS
           end
 
           def test_no_record_separate_comma
-            message = "parse error: after array element, I expect ',' or ']'"
+            message = "Expected comma or object or array close: char 37"
             before = <<-BEFORE
 [
 {"_key": "alice", "name": "Alice"}
@@ -394,7 +392,7 @@ EOC
           end
 
           def test_garbage_before_json
-            message = "there are garbages before JSON"
+            message = "Expected value: char 0"
             before = ""
             after = <<-AFTER
 XXX

@@ -21,13 +21,17 @@ class LoadValuesParserTest < Test::Unit::TestCase
     @parser.on_value = lambda do |value|
       @values << value
     end
+    @parse_done = false
     @parser.on_end = lambda do |rest|
+      @parse_done = true
+      @parse_rest = rest
     end
   end
 
   def parse(data)
     data.each_line do |line|
       @parser << line
+      break if @parse_done
     end
     @values
   end
@@ -140,10 +144,50 @@ class LoadValuesParserTest < Test::Unit::TestCase
     }
   }
 ]
-[
-  1
-]
       JSON
+    end
+  end
+
+  sub_test_case "error" do
+    test "unfinished" do
+      assert_equal([
+                     {
+                       "object" => {
+                         "string" => "abc",
+                       },
+                     },
+                   ],
+                   parse(<<-JSON))
+[
+  {
+    "object": {
+      "string": "abc"
+    }
+  },
+  {
+      JSON
+      assert_false(@parse_done)
+    end
+
+    test "too much" do
+      assert_equal([
+                     {
+                       "object" => {
+                         "string" => "abc",
+                       },
+                     },
+                   ],
+                   parse(<<-JSON))
+[
+  {
+    "object": {
+      "string": "abc"
+    }
+  }
+]garbage
+      JSON
+      assert_equal([true, "garbage\n"],
+                   [@parse_done, @parse_rest])
     end
   end
 end
