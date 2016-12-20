@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #
-# Copyright (C) 2012-2013  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2012-2016  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -35,13 +35,6 @@ end
 
 $LOAD_PATH.unshift(lib_dir)
 $LOAD_PATH.unshift(test_dir)
-
-# TODO: Remove me when suppress warnings patches are merged int
-# ffi_yajl.
-require "stringio"
-$VERBOSE = false
-require "ffi_yajl/ffi"
-$VERBOSE = true
 
 require "groonga-command-parser-test-utils"
 
