@@ -4,7 +4,8 @@
 
 ### Improvements
 
-  * Switched to json-stream from ffi-yajl. Because ffi-yajl doesn't work on Windows.
+  * Switched to json-stream from ffi-yajl. Because ffi-yajl doesn't
+    work on Windows.
 
 ## 1.0.6: 2016-09-12
 
