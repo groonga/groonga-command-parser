@@ -1,4 +1,4 @@
-# Copyright (C) 2014  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2014-2017  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -26,6 +26,7 @@ module Groonga
           def initialize
             @format = :command
             @uri_prefix = "http://localhost:10041"
+            @pretty_print = true
           end
 
           def run(argv=ARGV)
@@ -70,6 +71,13 @@ module Groonga
               @uri_prefix = prefix
             end
 
+            option_parser.on("--[no-]pretty-print",
+                             "Pretty print",
+                             "Available only in command format",
+                             "[#{@pretty_print}]") do |boolean|
+              @pretty_print = boolean
+            end
+
             option_parser.parse!(argv)
           end
 
@@ -88,7 +96,7 @@ module Groonga
             when :uri
               "#{@uri_prefix}#{command.to_uri_format}"
             else
-              command.to_command_format
+              command.to_command_format(:pretty_print => @pretty_print)
             end
           end
         end
