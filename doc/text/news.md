@@ -1,5 +1,11 @@
 # News
 
+## 1.0.8: 2017-01-18
+
+### Improvements
+
+  * `groonga-command-convert-format`: Added `--pretty-print` option.
+
 ## 1.0.7: 2016-12-20
 
 ### Improvements
