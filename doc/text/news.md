@@ -1,5 +1,11 @@
 # News
 
+## 1.0.9: 2017-01-18
+
+### Improvements
+
+  * Required groonga-command 1.3.2 or later for pretty print.
+
 ## 1.0.8: 2017-01-18
 
 ### Improvements
