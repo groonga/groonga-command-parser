@@ -1,6 +1,6 @@
 # -*- mode: ruby; coding: utf-8 -*-
 #
-# Copyright (C) 2012-2015  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2012-2017  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -52,7 +52,7 @@ Gem::Specification.new do |spec|
   spec.licenses = ["LGPLv2.1+"]
   spec.require_paths = ["lib"]
 
-  spec.add_runtime_dependency("groonga-command", ">= 1.0.9")
+  spec.add_runtime_dependency("groonga-command", ">= 1.3.2")
   spec.add_runtime_dependency("json-stream")
 
   spec.add_development_dependency("test-unit")
