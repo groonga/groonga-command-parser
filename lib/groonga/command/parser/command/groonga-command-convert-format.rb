@@ -89,6 +89,7 @@ module Groonga
             input.each_line do |line|
               parser << line
             end
+            parser.finish
           end
 
           def convert_format(command)
