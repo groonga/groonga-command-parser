@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-#
-# Copyright (C) 2011-2015  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2011-2017  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -59,8 +57,8 @@ module Groonga
           parser.on_load_start do |command|
             yield(:on_load_start, command)
           end
-          parser.on_load_columns do |command, header|
-            yield(:on_load_columns, command, header)
+          parser.on_load_columns do |command, columns|
+            yield(:on_load_columns, command, columns)
           end
           parser.on_load_value do |command, value|
             yield(:on_load_value, command, value)
