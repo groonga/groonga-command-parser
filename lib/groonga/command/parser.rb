@@ -219,9 +219,7 @@ module Groonga
 
       def consume_load_values(tag)
         throw(tag) if @buffer.empty?
-        @command.original_source << @buffer
         @load_values_parser << @buffer
-        @buffer.clear
       end
 
       def consume_line(tag)
@@ -359,14 +357,14 @@ module Groonga
             on_load_value(@command, value)
           end
         end
+        @load_values_parser.on_consumed = lambda do |consumed|
+          @command.original_source << consumed if @loading
+        end
         @load_values_parser.on_end = lambda do |rest|
-          if rest
-            original_source_size = @command.original_source.size
-            @command.original_source.slice!(original_source_size - rest.size,
-                                            rest.size)
-          end
+          loading = @loading
           on_load_complete(@command)
           reset
+          @buffer << rest if loading and rest
         end
       end
     end

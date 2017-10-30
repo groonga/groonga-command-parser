@@ -21,7 +21,12 @@ class LoadValuesParserTest < Test::Unit::TestCase
     @parser.on_value = lambda do |value|
       @values << value
     end
+    @parse_consumed = []
+    @parser.on_consumed = lambda do |consumed|
+      @parse_consumed << consumed
+    end
     @parse_done = false
+    @parse_rest = nil
     @parser.on_end = lambda do |rest|
       @parse_done = true
       @parse_rest = rest
@@ -186,8 +191,17 @@ class LoadValuesParserTest < Test::Unit::TestCase
   }
 ]garbage
       JSON
-      assert_equal([true, "garbage\n"],
-                   [@parse_done, @parse_rest])
+      consumed = [
+        "[\n",
+        "  {\n",
+        "    \"object\": {\n",
+        "      \"string\": \"abc\"\n",
+        "    }\n",
+        "  }\n",
+        "]",
+      ]
+      assert_equal([true, consumed, "garbage\n"],
+                   [@parse_done, @parse_consumed, @parse_rest])
     end
   end
 end

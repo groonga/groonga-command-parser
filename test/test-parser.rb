@@ -253,108 +253,138 @@ status
         class MultiLineTest < self
           class BracketTest < self
             def test_have_columns
-              @parser << <<-EOC
+              @parser << <<-COMMAND
 load --table Users --columns "_key, name"
 [
 ["alice", "Alice"]
 ]
-EOC
+              COMMAND
+
               expected_events = []
-              expected_events << [:load_start, <<-EOC.chomp]
+              expected_events << [:load_start, <<-COMMAND.chomp]
 load --table Users --columns "_key, name"
-EOC
-              expected_events << [:load_columns, <<-EOC.chomp, ["_key", "name"]]
+              COMMAND
+              expected_events << [:load_columns, <<-COMMAND.chomp, ["_key", "name"]]
 load --table Users --columns "_key, name"
-EOC
-              expected_events << [:load_value, <<-EOC, ["alice", "Alice"]]
+              COMMAND
+              expected_events << [:load_value, <<-COMMAND, ["alice", "Alice"]]
 load --table Users --columns "_key, name"
-[
-["alice", "Alice"]
-]
-EOC
-              expected_events << [:load_complete, <<-EOC.chomp]
+COMMAND
+              expected_events << [:load_complete, <<-COMMAND.chomp]
 load --table Users --columns "_key, name"
 [
 ["alice", "Alice"]
 ]
-EOC
+              COMMAND
               assert_equal(expected_events, @events)
             end
 
             def test_no_columns
-              @parser << <<-EOC
+              @parser << <<-COMMAND
 load --table Users
 [
 ["_key", "name"],
 ["alice", "Alice"]
 ]
-EOC
+              COMMAND
+
               expected_events = []
-              expected_events << [:load_start, <<-EOC.chomp]
+              expected_events << [:load_start, <<-COMMAND.chomp]
 load --table Users
-EOC
-              expected_events << [:load_columns, <<-EOC, ["_key", "name"]]
+              COMMAND
+              expected_events << [:load_columns, <<-COMMAND, ["_key", "name"]]
 load --table Users
-[
-["_key", "name"],
-["alice", "Alice"]
-]
-EOC
-              expected_events << [:load_value, <<-EOC, ["alice", "Alice"]]
+              COMMAND
+              expected_events << [:load_value, <<-COMMAND, ["alice", "Alice"]]
 load --table Users
-[
-["_key", "name"],
-["alice", "Alice"]
-]
-EOC
-              expected_events << [:load_complete, <<-EOC.chomp]
+              COMMAND
+              expected_events << [:load_complete, <<-COMMAND.chomp]
 load --table Users
 [
 ["_key", "name"],
 ["alice", "Alice"]
 ]
-EOC
+              COMMAND
               assert_equal(expected_events, @events)
             end
           end
 
           def test_brace
-            @parser << <<-EOC
+            @parser << <<-COMMAND
 load --table Users
 [
 {"_key": "alice", "name": "Alice"},
 {"_key": "bob",   "name": "Bob"}
 ]
-EOC
+            COMMAND
+
             expected_events = []
-            expected_events << [:load_start, <<-EOC.chomp]
+            expected_events << [:load_start, <<-COMMAND.chomp]
 load --table Users
-EOC
+            COMMAND
             value = {"_key" => "alice", "name" => "Alice"}
-            expected_events << [:load_value, <<-EOC, value]
+            expected_events << [:load_value, <<-COMMAND, value]
 load --table Users
-[
-{"_key": "alice", "name": "Alice"},
-{"_key": "bob",   "name": "Bob"}
-]
-EOC
+            COMMAND
             value = {"_key" => "bob", "name" => "Bob"}
-            expected_events << [:load_value, <<-EOC, value]
+            expected_events << [:load_value, <<-COMMAND, value]
+load --table Users
+            COMMAND
+            expected_events << [:load_complete, <<-COMMAND.chomp]
 load --table Users
 [
 {"_key": "alice", "name": "Alice"},
 {"_key": "bob",   "name": "Bob"}
 ]
-EOC
-            expected_events << [:load_complete, <<-EOC.chomp]
-load --table Users
-[
-{"_key": "alice", "name": "Alice"},
-{"_key": "bob",   "name": "Bob"}
-]
-EOC
+            COMMAND
             assert_equal(expected_events, @events)
           end
+        end
+
+        def test_multiple
+          @parser << <<-COMMANDS
+load --table Users
+[
+{"_key": "alice", "name": "Alice"}
+]
+
+load --table Users
+[
+{"_key": "bob",   "name": "Bob"}
+]
+          COMMANDS
+
+          expected_events = []
+
+          expected_events << [:load_start, <<-SOURCE.chomp]
+load --table Users
+          SOURCE
+          value = {"_key" => "alice", "name" => "Alice"}
+          expected_events << [:load_value, <<-SOURCE, value]
+load --table Users
+          SOURCE
+          expected_events << [:load_complete, <<-SOURCE.chomp]
+load --table Users
+[
+{"_key": "alice", "name": "Alice"}
+]
+          SOURCE
+
+          expected_events << [:load_start, <<-SOURCE.chomp]
+load --table Users
+          SOURCE
+          value = {"_key" => "bob", "name" => "Bob"}
+          expected_events << [:load_value, <<-SOURCE, value]
+load --table Users
+          SOURCE
+          expected_events << [:load_complete, <<-SOURCE.chomp]
+load --table Users
+[
+{"_key": "bob",   "name": "Bob"}
+]
+          SOURCE
+
+          assert_equal(expected_events, @events)
         end
 
         class ErrorTest < self

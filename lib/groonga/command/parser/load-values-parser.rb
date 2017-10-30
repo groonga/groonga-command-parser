@@ -21,10 +21,12 @@ module Groonga
     class Parser
       class LoadValuesParser
         attr_writer :on_value
+        attr_writer :on_consumed
         attr_writer :on_end
         def initialize
           initialize_parser
           @on_value = nil
+          @on_consumed = nil
           @on_end = nil
           @containers = []
           @keys = []
@@ -49,9 +51,16 @@ module Groonga
             :continue
           end
 
+          pos = @parser.pos
+          consumed = pos - before_pos
+          if consumed > 0
+            if consumed < data_size
+              @on_consumed.call(data[0, consumed])
+            else
+              @on_consumed.call(data)
+            end
+          end
           if status == :done
-            pos = @parser.pos
-            consumed = pos - before_pos
             if consumed < data_size
               @on_end.call(data[consumed..-1])
             else
