@@ -17,7 +17,7 @@
 module Groonga
   module Command
     class Parser
-      VERSION = "1.1.0"
+      VERSION = "1.1.1"
     end
   end
 end
