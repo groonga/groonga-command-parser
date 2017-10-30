@@ -1,5 +1,17 @@
 # News
 
+## 1.1.0: 2017-10-30
+
+### Improvements
+
+  * `groonga-command-convert-format`: Stopped to require the last
+    newline.
+
+### Fixes
+
+  * Fixed a bug that commands after `load` are ignored on `String`
+    parse mode.
+
 ## 1.0.9: 2017-01-18
 
 ### Improvements
