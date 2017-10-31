@@ -341,7 +341,7 @@ load --table Users
           end
         end
 
-        def test_multiple
+        def test_multiple_bulk
           @parser << <<-COMMANDS
 load --table Users
 [
@@ -376,6 +376,57 @@ load --table Users
           value = {"_key" => "bob", "name" => "Bob"}
           expected_events << [:load_value, <<-SOURCE, value]
 load --table Users
+          SOURCE
+          expected_events << [:load_complete, <<-SOURCE.chomp]
+load --table Users
+[
+{"_key": "bob",   "name": "Bob"}
+]
+          SOURCE
+
+          assert_equal(expected_events, @events)
+        end
+
+        def test_multiple_line
+          commands = <<-COMMANDS
+load --table Users
+[
+{"_key": "alice", "name": "Alice"}
+]
+
+load --table Users
+[
+{"_key": "bob",   "name": "Bob"}
+]
+          COMMANDS
+          commands.each_line do |line|
+            @parser << line
+          end
+
+          expected_events = []
+
+          expected_events << [:load_start, <<-SOURCE.chomp]
+load --table Users
+          SOURCE
+          value = {"_key" => "alice", "name" => "Alice"}
+          expected_events << [:load_value, <<-SOURCE, value]
+load --table Users
+[
+          SOURCE
+          expected_events << [:load_complete, <<-SOURCE.chomp]
+load --table Users
+[
+{"_key": "alice", "name": "Alice"}
+]
+          SOURCE
+
+          expected_events << [:load_start, <<-SOURCE.chomp]
+load --table Users
+          SOURCE
+          value = {"_key" => "bob", "name" => "Bob"}
+          expected_events << [:load_value, <<-SOURCE, value]
+load --table Users
+[
           SOURCE
           expected_events << [:load_complete, <<-SOURCE.chomp]
 load --table Users

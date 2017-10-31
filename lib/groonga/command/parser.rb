@@ -358,7 +358,10 @@ module Groonga
           end
         end
         @load_values_parser.on_consumed = lambda do |consumed|
-          @command.original_source << consumed if @loading
+          if @loading
+            @command.original_source << consumed
+            @buffer = @buffer[consumed.bytesize..-1]
+          end
         end
         @load_values_parser.on_end = lambda do |rest|
           loading = @loading
