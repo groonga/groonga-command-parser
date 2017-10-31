@@ -1,5 +1,11 @@
 # News
 
+## 1.1.2: 2017-10-31
+
+### Fixes
+
+  * Fixed a nil error.
+
 ## 1.1.1: 2017-10-31
 
 ### Fixes
