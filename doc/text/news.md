@@ -1,5 +1,11 @@
 # News
 
+## 1.1.1: 2017-10-31
+
+### Fixes
+
+  * Fixed an infinite loop bug on parsing `load`.
+
 ## 1.1.0: 2017-10-30
 
 ### Improvements
