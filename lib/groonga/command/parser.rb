@@ -316,6 +316,11 @@ module Groonga
       def parse_command_line(command_line)
         splitter = CommandLineSplitter.new(command_line)
         name, *arguments = splitter.split
+        if name.nil?
+          raise Error.new("invalid command name",
+                          command_line,
+                          "")
+        end
         pair_arguments = {}
         ordered_arguments = []
         until arguments.empty?

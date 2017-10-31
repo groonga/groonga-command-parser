@@ -492,6 +492,21 @@ XXX
               JSON
             end
           end
+
+          def test_garbage_after_json
+            message = "invalid command name"
+            before = "\""
+            after = ""
+            error = Groonga::Command::Parser::Error.new(message, before, after)
+            assert_raise(error) do
+              @parser << <<-JSON
+load --table Users
+[
+{"_key": "alice", "name": "Alice"}
+]"
+              JSON
+            end
+          end
         end
       end
 
