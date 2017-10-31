@@ -360,7 +360,11 @@ module Groonga
         @load_values_parser.on_consumed = lambda do |consumed|
           if @loading
             @command.original_source << consumed
-            @buffer = @buffer[consumed.bytesize..-1]
+            if @buffer.bytesize == consumed.bytesize
+              @buffer = "".force_encoding("ASCII-8BIT")
+            else
+              @buffer = @buffer[consumed.bytesize..-1]
+            end
           end
         end
         @load_values_parser.on_end = lambda do |rest|
