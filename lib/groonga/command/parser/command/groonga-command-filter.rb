@@ -25,6 +25,8 @@ module Groonga
         class GroongaCommandFilter
           def initialize
             @include_tables = {}
+            @include_schema = true
+            @include_load = true
           end
 
           def run(argv=ARGV)
@@ -64,6 +66,16 @@ module Groonga
               @include_tables[table][column] = true
             end
 
+            option_parser.on("--no-include-schema",
+                             "Remove schema manipulation commands") do |boolean|
+              @include_schema = boolean
+            end
+
+            option_parser.on("--no-include-load",
+                             "Remove load command") do |boolean|
+              @include_load = boolean
+            end
+
             option_parser.parse!(argv)
           end
 
@@ -95,6 +107,7 @@ module Groonga
 
           private
           def filter_command(command)
+            return unless @include_schema # TODO: Too loose
             case command
             when TableCreate
               return unless target_table?(command.name)
@@ -108,6 +121,7 @@ module Groonga
           end
 
           def filter_load_start(command)
+            return unless @include_load
             return unless target_table?(command.table)
             puts(command)
             puts("[")
@@ -115,6 +129,7 @@ module Groonga
           end
 
           def filter_load_columns(command, columns)
+            return unless @include_load
             columns = extract_target_columns(command.table, columns)
             return unless columns
             print(JSON.generate(columns))
@@ -122,6 +137,7 @@ module Groonga
           end
 
           def filter_load_value(command, value)
+            return unless @include_load
             return unless target_table?(command.table)
             value = extract_target_attributes(command.table,
                                               command.columns,
@@ -133,6 +149,7 @@ module Groonga
           end
 
           def filter_load_complete(command)
+            return unless @include_load
             return unless target_table?(command.table)
             puts(",") if @need_comma
             puts("]")
