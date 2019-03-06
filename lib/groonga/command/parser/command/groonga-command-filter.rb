@@ -131,7 +131,7 @@ module Groonga
           def filter_load_columns(command, columns)
             return unless @include_load
             columns = extract_target_columns(command.table, columns)
-            return unless columns
+            return if columns.empty?
             print(JSON.generate(columns))
             @need_comma = true
           end
@@ -142,7 +142,7 @@ module Groonga
             value = extract_target_attributes(command.table,
                                               command.columns,
                                               value)
-            return unless value
+            return if value.empty?
             puts(",") if @need_comma
             print(JSON.generate(value))
             @need_comma = true
@@ -164,26 +164,20 @@ module Groonga
             return true if @include_tables.empty?
             columns = @include_tables[table]
             return false if columns.nil?
-            columns.key?(column)
+            column == "_key" or columns.key?(column)
           end
 
           def extract_target_columns(table, columns)
-            return columns if @include_tables.empty?
-            include_columns = @include_tables[table]
-            return nil if include_columns.nil?
             columns.find_all do |column|
-              include_columns.key?(column)
+              target_column?(table, column)
             end
           end
 
           def extract_target_attributes(table, columns, value)
-            return columns if @include_tables.empty?
-            include_columns = @include_tables[table]
-            return nil if include_columns.nil?
             case value
             when ::Array
               value.find_all.each_with_index do |_, i|
-                include_columns.key?(columns[i])
+                target_column?(table, columns[i])
               end
             when ::Hash
               raise "TODO"
