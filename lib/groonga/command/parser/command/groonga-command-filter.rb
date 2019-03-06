@@ -151,7 +151,6 @@ module Groonga
           def filter_load_complete(command)
             return unless @include_load
             return unless target_table?(command.table)
-            puts(",") if @need_comma
             puts("]")
           end
 
