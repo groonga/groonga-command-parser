@@ -85,7 +85,7 @@ module Groonga
               filter_load_complete(command)
             end
             parser.on_comment do |comment|
-              puts(comment)
+              puts("\##{comment}")
             end
             input.each_line do |line|
               parser << line
