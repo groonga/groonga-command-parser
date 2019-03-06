@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2017  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2011-2019  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -369,7 +369,7 @@ module Groonga
         end
         @load_values_parser.on_consumed = lambda do |consumed|
           if @loading
-            @command.original_source << consumed if @Need_original_source
+            @command.original_source << consumed if @need_original_source
             if @buffer.bytesize == consumed.bytesize
               @buffer = "".force_encoding("ASCII-8BIT")
             else
