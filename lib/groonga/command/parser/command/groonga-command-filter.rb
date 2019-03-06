@@ -80,7 +80,7 @@ module Groonga
           end
 
           def filter(input)
-            parser = Parser.new
+            parser = Parser.new(need_original_source: true)
             parser.on_command do |command|
               filter_command(command)
             end

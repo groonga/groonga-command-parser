@@ -117,7 +117,8 @@ module Groonga
         end
       end
 
-      def initialize
+      def initialize(options={})
+        @need_original_source = options.fetch(:need_original_source, true)
         reset
         initialize_hooks
       end
@@ -134,9 +135,13 @@ module Groonga
       # command, this method raises {Parser::Error}.
       def finish
         if @loading
-          raise Error.new("not completed",
-                          @command.original_source.lines.to_a.last,
-                          "")
+          original_source = @command.original_source
+          if original_source
+            last_line = original_source.lines.to_a.last
+          else
+            last_line = ""
+          end
+          raise Error.new("not completed", last_line, "")
         else
           catch do |tag|
             parse_line(@buffer)
@@ -245,7 +250,7 @@ module Groonga
           @command = parse_command(line)
           return if @command.nil?
 
-          @command.original_source = line
+          @command.original_source = line if @need_original_source
           process_command
         end
       end
@@ -265,7 +270,7 @@ module Groonga
               on_load_complete(@command)
               reset
             else
-              @command.original_source << "\n"
+              @command.original_source << "\n" if @need_original_source
               @loading = true
               initialize_load_values_parser
             end
@@ -364,7 +369,7 @@ module Groonga
         end
         @load_values_parser.on_consumed = lambda do |consumed|
           if @loading
-            @command.original_source << consumed
+            @command.original_source << consumed if @Need_original_source
             if @buffer.bytesize == consumed.bytesize
               @buffer = "".force_encoding("ASCII-8BIT")
             else
