@@ -81,6 +81,10 @@ module Groonga
 
             option_parser.on("--elasticsearch-version=VERSION",
                              "Specify the Elasticsearch version",
+                             "Because the Elasticsearch's importformat" +
+                                        " differs depending on version",
+                             "Currently, we can specify 5, 6, 7, and 8" +
+                                                      " in this option",
                              "Available only in elasticsearch format",
                              "[#{@elasticsearch_version}]") do |version|
               @elasticsearch_version = version
