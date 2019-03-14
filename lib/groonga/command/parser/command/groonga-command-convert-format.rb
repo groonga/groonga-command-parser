@@ -27,6 +27,7 @@ module Groonga
             @format = :command
             @uri_prefix = "http://localhost:10041"
             @pretty_print = true
+            @elasticsearch_version = 5
           end
 
           def run(argv=ARGV)
@@ -57,7 +58,7 @@ module Groonga
             option_parser.banner += " INPUT_PATH1 INPUT_PATH2 ..."
             option_parser.version = VERSION
 
-            formats = [:uri, :command]
+            formats = [:uri, :command, :elasticsearch]
             option_parser.on("--format=FORMAT", formats,
                              "Convert to FORMAT",
                              "Available formats #{formats.join(', ')}",
@@ -76,6 +77,12 @@ module Groonga
                              "Available only in command format",
                              "[#{@pretty_print}]") do |boolean|
               @pretty_print = boolean
+
+            option_parser.on("--elasticsearch-version=VERSION",
+                             "Specify the Elasticsearch version",
+                             "Available only in elasticsearch format",
+                             "[#{@elasticsearch_version}]") do |version|
+              @elasticsearch_version = version
             end
 
             option_parser.parse!(argv)
@@ -96,6 +103,8 @@ module Groonga
             case @format
             when :uri
               "#{@uri_prefix}#{command.to_uri_format}"
+            when :elasticsearch
+              command.to_elasticsearch_format(:version => @elasticsearch_version)
             else
               command.to_command_format(:pretty_print => @pretty_print)
             end
