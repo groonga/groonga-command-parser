@@ -52,7 +52,7 @@ Gem::Specification.new do |spec|
   spec.licenses = ["LGPLv2.1+"]
   spec.require_paths = ["lib"]
 
-  spec.add_runtime_dependency("groonga-command", ">= 1.3.2")
+  spec.add_runtime_dependency("groonga-command", ">= 1.4.0")
   spec.add_runtime_dependency("json-stream")
 
   spec.add_development_dependency("test-unit")
