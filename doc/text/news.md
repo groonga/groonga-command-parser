@@ -1,5 +1,19 @@
 # News
 
+## 1.1.3: 2019-03-22
+
+### Improvements
+
+  * Added a error check for grabage after load.
+  * `groonga-command-filter`: Added.
+  * `groonga-command-filter`: Added `--no-include-schema`.
+  * `groonga-command-filter`: Added `--no-include-load`.
+  * `groonga-command-convert-format`: Added new converter
+    for converting to the Elasticsearch format.
+  * `groonga-command-convert-format`: Added `--elasticsearch-version`.
+  * Required groonga-command 1.4.0 or later for converting to
+    the Elasticsearch format.
+
 ## 1.1.2: 2017-10-31
 
 ### Fixes
