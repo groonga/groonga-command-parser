@@ -95,8 +95,23 @@ module Groonga
 
           def convert(input)
             parser = Parser.new
-            parser.on_command do |command|
-              puts(convert_format(command))
+            case @format
+            when :elasticsearch
+              loaded_values = []
+              parser.on_load_value do |command, value|
+                loaded_values << value
+              end
+              parser.on_load_columns do |command, header|
+                loaded_values << header
+              end
+              parser.on_load_complete do |command|
+                command[:values] = loaded_values.to_s
+                puts(convert_format(command))
+              end
+            else
+              parser.on_command do |command|
+                puts(convert_format(command))
+              end
             end
             input.each_line do |line|
               parser << line
