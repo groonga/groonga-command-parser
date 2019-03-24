@@ -86,6 +86,7 @@ module Groonga
                              "Currently, we can specify 5, 6, 7, and 8" +
                                                       " in this option",
                              "Available only in elasticsearch format",
+                             Integer,
                              "[#{@elasticsearch_version}]") do |version|
               @elasticsearch_version = version
             end
