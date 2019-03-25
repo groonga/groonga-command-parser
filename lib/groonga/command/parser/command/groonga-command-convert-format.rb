@@ -106,7 +106,7 @@ module Groonga
                 loaded_values << header
               end
               parser.on_load_complete do |command|
-                command[:values] = loaded_values.to_s
+                command[:values] = JSON.generate(loaded_values)
                 puts(convert_format(command))
               end
             else
