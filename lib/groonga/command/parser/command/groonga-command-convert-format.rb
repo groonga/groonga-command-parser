@@ -1,4 +1,4 @@
-# Copyright (C) 2014-2017  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2014-2019  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -95,7 +95,7 @@ module Groonga
           end
 
           def convert(input)
-            parser = Parser.new
+            parser = Parser.new(need_original_source: false)
             case @format
             when :elasticsearch
               parser.on_load_columns do |command, columns|
