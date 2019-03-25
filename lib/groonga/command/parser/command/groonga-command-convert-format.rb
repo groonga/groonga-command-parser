@@ -86,6 +86,7 @@ module Groonga
                              "Currently, we can specify 5, 6, 7, and 8" +
                                                       " in this option",
                              "Available only in elasticsearch format",
+                             Integer,
                              "[#{@elasticsearch_version}]") do |version|
               @elasticsearch_version = version
             end
@@ -95,8 +96,23 @@ module Groonga
 
           def convert(input)
             parser = Parser.new
-            parser.on_command do |command|
-              puts(convert_format(command))
+            case @format
+            when :elasticsearch
+              loaded_values = []
+              parser.on_load_value do |command, value|
+                loaded_values << value
+              end
+              parser.on_load_columns do |command, columns|
+                command[:columns] ||= columns.join(",")
+              end
+              parser.on_load_complete do |command|
+                command[:values] = JSON.generate(loaded_values)
+                puts(convert_format(command))
+              end
+            else
+              parser.on_command do |command|
+                puts(convert_format(command))
+              end
             end
             input.each_line do |line|
               parser << line
