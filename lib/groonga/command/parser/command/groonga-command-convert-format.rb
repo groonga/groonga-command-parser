@@ -98,12 +98,12 @@ module Groonga
             parser = Parser.new
             case @format
             when :elasticsearch
+              parser.on_load_columns do |command, columns|
+                command[:columns] ||= columns.join(",")
+              end
               loaded_values = []
               parser.on_load_value do |command, value|
                 loaded_values << value
-              end
-              parser.on_load_columns do |command, columns|
-                command[:columns] ||= columns.join(",")
               end
               parser.on_load_complete do |command|
                 command[:values] = JSON.generate(loaded_values)
