@@ -1,5 +1,12 @@
 # News
 
+## 1.1.4: 2019-03-26
+
+### Fixes
+
+  * Fixed a bug that can't convert to the Elasticsearch format
+    when a "load" command hasn't option name of "--value"
+
 ## 1.1.3: 2019-03-22
 
 ### Improvements
