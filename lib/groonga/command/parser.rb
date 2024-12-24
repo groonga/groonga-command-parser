@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2019  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2011-2024  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -345,7 +345,8 @@ module Groonga
       def reset
         @command = nil
         @loading = false
-        @buffer = "".force_encoding("ASCII-8BIT")
+        @buffer = +""
+        @buffer.force_encoding("ASCII-8BIT")
         @load_values_parser = nil
       end
 
@@ -371,7 +372,8 @@ module Groonga
           if @loading
             @command.original_source << consumed if @need_original_source
             if @buffer.bytesize == consumed.bytesize
-              @buffer = "".force_encoding("ASCII-8BIT")
+              @buffer = +""
+              @buffer.force_encoding("ASCII-8BIT")
             else
               @buffer = @buffer[consumed.bytesize..-1]
             end

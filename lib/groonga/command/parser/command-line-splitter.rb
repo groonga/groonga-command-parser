@@ -1,4 +1,4 @@
-# Copyright (C) 2015  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2015-2024  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -32,7 +32,7 @@ module Groonga
           start_quote = nil
           until scanner.eos?
             if start_quote
-              token = ""
+              token = +""
               loop do
                 chunk = scanner.scan_until(/#{Regexp.escape(start_quote)}/)
                 if chunk.nil?

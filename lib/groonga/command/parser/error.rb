@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-#
-# Copyright (C) 2011-2015  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2011-2024  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -31,7 +29,7 @@ module Groonga
 
         private
         def compute_location(before, after)
-          location = ""
+          location = +""
           if before[-1] == ?\n
             location << before
             location << after
