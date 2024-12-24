@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #
-# Copyright (C) 2012-2016  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2012-2024  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -23,9 +23,6 @@ lib_dir = File.join(base_dir, "lib")
 test_dir = File.join(base_dir, "test")
 
 require "test-unit"
-require "test/unit/notify"
-
-Test::Unit::Priority.enable
 
 groonga_command_dir = File.join(base_dir, "..", "groonga-command")
 groonga_command_dir = File.expand_path(groonga_command_dir)
