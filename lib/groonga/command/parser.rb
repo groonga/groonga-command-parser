@@ -16,6 +16,12 @@
 
 require "English"
 require "cgi/escape"
+begin
+  CGI.unescape("")
+rescue NameError
+  # Ruby < 4.0 need cgi for CGI.unescape.
+  require "cgi"
+end
 require "json"
 
 require "groonga/command"
