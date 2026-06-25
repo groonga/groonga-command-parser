@@ -1,6 +1,6 @@
-# -*- mode: ruby; coding: utf-8 -*-
+# -*- ruby -*-
 #
-# Copyright (C) 2012  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2012-2026  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -19,3 +19,16 @@
 source "https://rubygems.org/"
 
 gemspec
+
+gem "json", git: "https://github.com/ruby/json.git"
+
+group :development do
+  gem "kramdown"
+  gem "packnga"
+  gem "rake"
+  gem "yard"
+end
+
+group :test do
+  gem "test-unit"
+end

@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2016  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2011-2026  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -270,7 +270,7 @@ load --table Users --columns "_key, name"
               expected_events << [:load_value, <<-COMMAND, ["alice", "Alice"]]
 load --table Users --columns "_key, name"
 COMMAND
-              expected_events << [:load_complete, <<-COMMAND.chomp]
+              expected_events << [:load_complete, <<-COMMAND]
 load --table Users --columns "_key, name"
 [
 ["alice", "Alice"]
@@ -298,7 +298,7 @@ load --table Users
               expected_events << [:load_value, <<-COMMAND, ["alice", "Alice"]]
 load --table Users
               COMMAND
-              expected_events << [:load_complete, <<-COMMAND.chomp]
+              expected_events << [:load_complete, <<-COMMAND]
 load --table Users
 [
 ["_key", "name"],
@@ -330,7 +330,7 @@ load --table Users
             expected_events << [:load_value, <<-COMMAND, value]
 load --table Users
             COMMAND
-            expected_events << [:load_complete, <<-COMMAND.chomp]
+            expected_events << [:load_complete, <<-COMMAND]
 load --table Users
 [
 {"_key": "alice", "name": "Alice"},
@@ -363,11 +363,12 @@ load --table Users
           expected_events << [:load_value, <<-SOURCE, value]
 load --table Users
           SOURCE
-          expected_events << [:load_complete, <<-SOURCE.chomp]
+          expected_events << [:load_complete, <<-SOURCE]
 load --table Users
 [
 {"_key": "alice", "name": "Alice"}
 ]
+
           SOURCE
 
           expected_events << [:load_start, <<-SOURCE.chomp]
@@ -377,7 +378,7 @@ load --table Users
           expected_events << [:load_value, <<-SOURCE, value]
 load --table Users
           SOURCE
-          expected_events << [:load_complete, <<-SOURCE.chomp]
+          expected_events << [:load_complete, <<-SOURCE]
 load --table Users
 [
 {"_key": "bob",   "name": "Bob"}
@@ -412,8 +413,9 @@ load --table Users
           expected_events << [:load_value, <<-SOURCE, value]
 load --table Users
 [
+{"_key": "alice", "name": "Alice"}
           SOURCE
-          expected_events << [:load_complete, <<-SOURCE.chomp]
+          expected_events << [:load_complete, <<-SOURCE]
 load --table Users
 [
 {"_key": "alice", "name": "Alice"}
@@ -427,8 +429,9 @@ load --table Users
           expected_events << [:load_value, <<-SOURCE, value]
 load --table Users
 [
+{"_key": "bob",   "name": "Bob"}
           SOURCE
-          expected_events << [:load_complete, <<-SOURCE.chomp]
+          expected_events << [:load_complete, <<-SOURCE]
 load --table Users
 [
 {"_key": "bob",   "name": "Bob"}
@@ -453,7 +456,7 @@ EOS
           end
 
           def test_no_record_separate_comma
-            message = "Expected comma or object or array close: char 37"
+            message = "expected ',' or ']' after array value"
             before = <<-BEFORE
 [
 {"_key": "alice", "name": "Alice"}
@@ -473,7 +476,7 @@ EOC
           end
 
           def test_garbage_before_json
-            message = "Expected value: char 0"
+            message = "unexpected character: 'XXX'"
             before = ""
             after = <<-AFTER
 XXX

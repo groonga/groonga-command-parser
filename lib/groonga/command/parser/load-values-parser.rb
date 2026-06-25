@@ -1,4 +1,4 @@
-# Copyright (C) 2015-2016  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2015-2026  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-require "json/stream"
+require "json"
 
 module Groonga
   module Command
@@ -24,35 +24,44 @@ module Groonga
         attr_writer :on_consumed
         attr_writer :on_end
         def initialize
-          initialize_parser
+          @parser = JSON::ResumableParser.new
           @on_value = nil
           @on_consumed = nil
           @on_end = nil
-          @containers = []
-          @keys = []
+          @n_processed_values = 0
         end
 
         def <<(data)
           data_size = data.bytesize
           return self if data_size.zero?
 
-          before_pos = @parser.pos
-          status = catch do |tag|
-            @tag = tag
-            begin
-              @parser << data
-            rescue JSON::Stream::ParserError => error
-              pos = @parser.pos
-              consumed = pos - before_pos - 1
-              raise Error.new(error.message,
-                              data[0, consumed],
-                              data[consumed..-1])
-            end
-            :continue
+          @parser << data
+          begin
+            done = @parser.parse
+          rescue JSON::ParserError => error
+            consumed = data_size - @parser.rest.bytesize
+            raise Error.new(error.message,
+                            data[0, consumed],
+                            data[consumed..-1])
           end
 
-          pos = @parser.pos
-          consumed = pos - before_pos
+          if done
+            @parser.value[@n_processed_values..-1].each do |value|
+              @on_value.call(value)
+            end
+            @n_processed_values = 0
+          else
+            partial_value = @parser.partial_value
+            if partial_value
+              partial_value[@n_processed_values..-2].each do |value|
+                @on_value.call(value)
+              end
+              @n_processed_values = partial_value.size - 1
+            end
+          end
+
+          consumed = data.bytesize
+          consumed -= @parser.rest.bytesize if done
           if consumed > 0
             if consumed < data_size
               @on_consumed.call(data[0, consumed])
@@ -60,7 +69,8 @@ module Groonga
               @on_consumed.call(data)
             end
           end
-          if status == :done
+
+          if done
             if consumed < data_size
               @on_end.call(data[consumed..-1])
             else
@@ -69,60 +79,6 @@ module Groonga
           end
 
           self
-        end
-
-        private
-        def initialize_parser
-          @parser = JSON::Stream::Parser.new
-          @parser.singleton_class.__send__(:attr_reader, :pos)
-          @parser.end_document do
-            throw(@tag, :done)
-          end
-          @parser.start_object do
-            push_container({})
-          end
-          @parser.end_object do
-            pop_container
-          end
-          @parser.start_array do
-            push_container([])
-          end
-          @parser.end_array do
-            pop_container
-          end
-          @parser.key do |key|
-            push_key(key)
-          end
-          @parser.value do |value|
-            push_value(value)
-          end
-        end
-
-        def push_container(container)
-          @containers.push(container)
-        end
-
-        def pop_container
-          container = @containers.pop
-          if @containers.size == 1
-            @on_value.call(container)
-          else
-            push_value(container)
-          end
-        end
-
-        def push_key(key)
-          @keys.push(key)
-        end
-
-        def push_value(value)
-          container = @containers.last
-          case container
-          when ::Hash
-            container[@keys.pop] = value
-          when ::Array
-            container.push(value)
-          end
         end
       end
     end
