@@ -1,5 +1,13 @@
 # News
 
+## 1.1.6: 2026-06-25
+
+### Improvements
+
+  * Migrated to json gem from json-stream gem.
+
+  * Dropped support for Ruby 2.6.
+
 ## 1.1.5: 2024-12-24
 
 ### Improvements
