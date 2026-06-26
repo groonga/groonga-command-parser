@@ -1,5 +1,13 @@
 # News
 
+## 1.1.7: 2026-06-26
+
+### Fixes
+
+  * `load`: Removed trailing spaces in data. This was a backward
+    incompatible change in 1.1.6. This change restored the previous
+    behavior.
+
 ## 1.1.6: 2026-06-25
 
 ### Improvements
