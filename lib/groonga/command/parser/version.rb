@@ -1,4 +1,4 @@
-# Copyright (C) 2013-2024  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2013-2026  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,7 @@
 module Groonga
   module Command
     class Parser
-      VERSION = "1.1.6"
+      VERSION = "1.1.7"
     end
   end
 end
