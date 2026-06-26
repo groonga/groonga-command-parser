@@ -387,6 +387,7 @@ module Groonga
         end
         @load_values_parser.on_end = lambda do |rest|
           loading = @loading
+          @command.original_source.rstrip! if @need_original_source
           on_load_complete(@command)
           reset
           @buffer << rest if loading and rest

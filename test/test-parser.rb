@@ -270,7 +270,7 @@ load --table Users --columns "_key, name"
               expected_events << [:load_value, <<-COMMAND, ["alice", "Alice"]]
 load --table Users --columns "_key, name"
 COMMAND
-              expected_events << [:load_complete, <<-COMMAND]
+              expected_events << [:load_complete, <<-COMMAND.chomp]
 load --table Users --columns "_key, name"
 [
 ["alice", "Alice"]
@@ -298,7 +298,7 @@ load --table Users
               expected_events << [:load_value, <<-COMMAND, ["alice", "Alice"]]
 load --table Users
               COMMAND
-              expected_events << [:load_complete, <<-COMMAND]
+              expected_events << [:load_complete, <<-COMMAND.chomp]
 load --table Users
 [
 ["_key", "name"],
@@ -330,7 +330,7 @@ load --table Users
             expected_events << [:load_value, <<-COMMAND, value]
 load --table Users
             COMMAND
-            expected_events << [:load_complete, <<-COMMAND]
+            expected_events << [:load_complete, <<-COMMAND.chomp]
 load --table Users
 [
 {"_key": "alice", "name": "Alice"},
@@ -363,12 +363,11 @@ load --table Users
           expected_events << [:load_value, <<-SOURCE, value]
 load --table Users
           SOURCE
-          expected_events << [:load_complete, <<-SOURCE]
+          expected_events << [:load_complete, <<-SOURCE.chomp]
 load --table Users
 [
 {"_key": "alice", "name": "Alice"}
 ]
-
           SOURCE
 
           expected_events << [:load_start, <<-SOURCE.chomp]
@@ -378,7 +377,7 @@ load --table Users
           expected_events << [:load_value, <<-SOURCE, value]
 load --table Users
           SOURCE
-          expected_events << [:load_complete, <<-SOURCE]
+          expected_events << [:load_complete, <<-SOURCE.chomp]
 load --table Users
 [
 {"_key": "bob",   "name": "Bob"}
@@ -415,7 +414,7 @@ load --table Users
 [
 {"_key": "alice", "name": "Alice"}
           SOURCE
-          expected_events << [:load_complete, <<-SOURCE]
+          expected_events << [:load_complete, <<-SOURCE.chomp]
 load --table Users
 [
 {"_key": "alice", "name": "Alice"}
@@ -431,7 +430,7 @@ load --table Users
 [
 {"_key": "bob",   "name": "Bob"}
           SOURCE
-          expected_events << [:load_complete, <<-SOURCE]
+          expected_events << [:load_complete, <<-SOURCE.chomp]
 load --table Users
 [
 {"_key": "bob",   "name": "Bob"}
