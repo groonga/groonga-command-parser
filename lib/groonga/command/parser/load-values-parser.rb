@@ -24,7 +24,7 @@ module Groonga
         attr_writer :on_consumed
         attr_writer :on_end
         def initialize
-          @parser = JSON::ResumableParser.new
+          @parser = JSON::ResumableParser.new(allow_duplicate_key: true)
           @on_value = nil
           @on_consumed = nil
           @on_end = nil

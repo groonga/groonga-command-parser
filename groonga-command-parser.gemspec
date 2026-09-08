@@ -53,6 +53,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_runtime_dependency("groonga-command", ">= 1.4.0")
-  spec.add_runtime_dependency("json", ">= 2.20.0")
+  spec.add_runtime_dependency("json", ">= 3.0.0")
 end
 
